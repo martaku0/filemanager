@@ -1,0 +1,78 @@
+<div id="dirs-container">
+    {{#each dirs.names}}
+        {{#if (checkCurrentDir ../current_path.dir ../dirs.paths @index)}}
+            <div class="dir-div">
+                <img src="/gfx/folder.png" alt="directory">
+                <form action="/nextDir/{{encodeDir2 ../current_path.dir this}}" method="GET"><button class="next-dir-btn" type="submit">{{this}}</button></form>
+                <form class="del-file-btn" action="/delDir" method="GET"><button type="submit" name="name" value="{{this}}">X</button>
+                </form>
+            </div>
+        {{/if}}
+    {{/each}}
+</div>
+
+<div id="files-container">
+    {{#each files.names}}
+        {{#if (checkCurrentDir ../current_path.dir ../files.paths @index)}}
+            <div class="file-div">
+                <img src="/gfx/file.png" alt="file">
+                <p>{{this}}</p>
+                <form class="del-file-btn" action="/delTxt" method="GET"><button type="submit" name="name" value="{{this}}">X</button>
+                </form>
+            </div>
+        {{/if}}
+    {{/each}}
+</div>
+
+<!-- ============= -->
+
+<dialog id="new_dir">
+    <form action="/addDir" method="GET">
+        <label>nazwa nowego folderu:
+            <input type="text" name="name" placeholder="nazwa"></label>
+        <button class="ok-btn" type="submit">OK</button>
+    </form>
+    {{#if (isHome current_path.dir)}}
+        <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{else}}
+        <form action="/nextDir/{{encodeDir2 current_path.dir ''}}" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{/if}}
+</dialog>
+<dialog id="new_txt">
+    <form action="/addTxt" method="GET">
+        <label>nazwa nowego pliku:
+            <input type="text" name="name" placeholder="nazwa"></label>
+        <button class="ok-btn" type="submit">OK</button>
+    </form>
+    {{#if (isHome current_path.dir)}}
+        <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{else}}
+        <form action="/nextDir/{{encodeDir2 current_path.dir ''}}" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{/if}}
+</dialog>
+<dialog id="multi_files">
+    <form action="/addMulti" method="GET">
+        <label>wybierz kilka:<br>
+            <input type='file' name="name" multiple/></label>   
+        <button class="ok-btn" type="submit">OK</button>
+    </form>
+    {{#if (isHome current_path.dir)}}
+        <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{else}}
+        <form action="/nextDir/{{encodeDir2 current_path.dir ''}}" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{/if}}
+</dialog>
+<dialog id="rename_dir">
+    <form action="/renameDir" method="GET">
+        <label>podaj nową nazwę:<br>
+            <input type='text' name="name"/></label>   
+        <button class="ok-btn" type="submit">OK</button>
+    </form>
+    {{#if (isHome current_path.dir)}}
+        <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{else}}
+        <form action="/nextDir/{{encodeDir2 current_path.dir ''}}" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+    {{/if}}
+</dialog>
+
+<div id="overlay"></div>
