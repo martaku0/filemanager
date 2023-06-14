@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 body {
     width: 100%;
     display: flex;
@@ -39,21 +44,18 @@ aside {
     height: 90vh;
 }
 
-aside>button {
+aside button {
     padding: 16px;
     background-color: rgb(44, 0, 202);
     color: white;
     font-weight: bold;
     border: none;
+    width: 100%;
 }
 
-aside>button:hover {
+aside button:hover {
     background-color: rgb(30, 0, 87);
     cursor: pointer;
-}
-
-div.files {
-    width: 70%;
 }
 
 button {
@@ -61,18 +63,57 @@ button {
     cursor: pointer;
 }
 
+.settings-btn-group {
+    align-self: center;
+    gap: 0;
+    display: flex;
+    width: 100%;
+}
+
+.settings-btn-group>button:first-child {
+    border-radius: 10px 0px 0px 10px;
+    border: 3px solid rgb(30, 0, 87);
+    border-right: none;
+}
+
+.settings-btn-group>button:last-child {
+    border-radius: 0px 10px 10px 0px;
+    border: 3px solid rgb(30, 0, 87);
+    border-left: none;
+}
+
+.settings-btn-group>button:nth-child(2) {
+    border-radius: 0px;
+    border: 3px solid rgb(30, 0, 87);
+}
+
 
 /* --- */
 
-#current_path {
+.current_path {
     display: flex;
+    border-bottom: 3px solid rgb(30, 0, 87);
 }
 
-#files {
+.current_path a,
+.current_path p {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.current_path a:visited {
+    color: black;
+}
+
+.files {
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 80%;
 }
 
 #dirs-container,
@@ -186,8 +227,69 @@ input[type="file"] {
 
 /* -- */
 
-.next-dir-btn {
+.next-dir-btn,
+.open-editor-btn {
     border: none;
     text-decoration: underline;
     cursor: pointer;
+}
+
+
+/* -- */
+
+.editor-body {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: auto;
+}
+
+.editor-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 97%;
+    overflow: auto;
+}
+
+#edit-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#edit-form button {
+    padding: 16px;
+    background-color: rgb(44, 0, 202);
+    color: white;
+    font-weight: bold;
+    border: none;
+    width: 100%;
+}
+
+#edit-form button:hover {
+    background-color: rgb(30, 0, 87);
+    cursor: pointer;
+}
+
+#edit-area {
+    resize: none;
+    font-size: 20px;
+    height: 100%;
+    outline: none;
+    border: 3px solid rgb(30, 0, 87);
+}
+
+#editor-numbers {
+    width: 3%;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 10px;
+    overflow: auto;
+    color: rgb(30, 0, 87);
+    font-weight: bold;
 }

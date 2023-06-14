@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/js/script.js" defer></script>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="shortcut icon" href="#">
     <title>File manager</title>
 </head>
 
@@ -16,24 +17,9 @@
     </header>
 
     <main>
-        <aside>
-            <button id="new_dir_btn">nowy folder</button>
-            <button id="new_txt_btn">nowy plik tekstowy</button>
-            <button id="multi_files_btn">wybierz kilka</button>
-            {{#unless (isHome current_path.dir)}}
-                <button id="rename_btn">zmień nazwę tego folderu</button>
-            {{/unless}}
-        </aside>
-
-        <div id="files">
-            <div id="current_path">
-                <a href="/">home&nbsp;&gt;&nbsp;</a>
-                {{#each (currPathSplit current_path.dir)}}
-                        <a href="{{encodeDir ../current_path.dir @index}}">{{this}}&nbsp;&gt;&nbsp;</a>
-                {{/each}}
-            </div>
-            {{{body}}}
-        </div>
+       
+        {{{body}}}
+        
     </main>
 
 </body>

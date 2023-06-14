@@ -69,6 +69,10 @@ const context = {
         path: 'home>',
         dir: '/'
     },
+    files_context: {
+        curr_filename: '',
+        curr_file_val: ''
+    }
 }
 
 app.get("/", function(req, res) {
@@ -299,6 +303,36 @@ app.get("/renameDir", function(req, res) {
         }
     })
 })
+
+/* --- */
+
+app.get('/openEditor/:filename', function(req, res) {
+    context.files_context.curr_filename = req.params.filename
+    let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${context.files_context.curr_filename}`)
+    fs.readFile(filepath, 'utf8', (err, data) => {
+        if (err) {
+            res.redirect("/")
+            return;
+        }
+        context.files_context.curr_file_val = data
+        res.render('editor.hbs', context)
+    });
+})
+
+app.get('/saveText', function(req, res) {
+    let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${context.files_context.curr_filename}`)
+    let val = req.query.textarea
+    fs.writeFile(filepath, val, (err) => {
+        if (err) {
+            console.log(err)
+            res.redirect("/")
+            return
+        }
+        console.log("ok")
+        res.redirect(`/openEditor/${context.files_context.curr_filename}`)
+    })
+})
+
 
 
 /* --- */

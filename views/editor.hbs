@@ -1,0 +1,28 @@
+<aside>
+    <div class="settings-btn-group">
+        <button id="font_down">font -</button>
+        <button id="colors">kolory</button>
+        <button id="font_up">font +</button>
+    </div>
+    <form action="/saveSettings" method="GET"><button type="submit">zapisz ustawienia</button></form>
+    <form action="/renameFile" method="GET"><button type="submit">zmień nazwę pliku</button></form>
+    <button id="show_file">podgląd pliku</button>
+    <form action="/" method="GET"><button type="submit">powrót</button></form>
+</aside>
+
+<div class="files">
+    <div class="current_path">
+        <p>{{current_path.dir}}{{files_context.curr_filename}}</p>
+    </div>
+    <div class="editor-body">
+        <div id="editor-numbers">
+            <p>1</p>
+        </div>
+        <div class="editor-content">
+            <form action="/saveText" method="GET" id="edit-form">
+                <textarea id="edit-area" name="textarea">{{files_context.curr_file_val}}</textarea>
+                <button type="submit">zapisz tekst</button>
+            </form>
+        </div>
+    </div>
+</div>
