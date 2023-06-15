@@ -207,7 +207,8 @@ dialog {
     z-index: 3;
 }
 
-#overlay {
+#overlay,
+#overlay2 {
     position: fixed;
     display: none;
     width: 100%;
@@ -275,16 +276,16 @@ input[type="file"] {
 }
 
 #edit-area {
-    resize: none;
     font-size: 20px;
+    resize: none;
     height: 100%;
     outline: none;
     border: 3px solid rgb(30, 0, 87);
 }
 
 #editor-numbers {
-    width: 3%;
     font-size: 20px;
+    width: 3%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -292,4 +293,8 @@ input[type="file"] {
     overflow: auto;
     color: rgb(30, 0, 87);
     font-weight: bold;
+}
+
+.saveTxtBtn {
+    font-size: 16px;
 }

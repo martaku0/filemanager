@@ -4,10 +4,16 @@
         <button id="colors">kolory</button>
         <button id="font_up">font +</button>
     </div>
-    <form action="/saveSettings" method="GET"><button type="submit">zapisz ustawienia</button></form>
-    <form action="/renameFile" method="GET"><button type="submit">zmień nazwę pliku</button></form>
-    <button id="show_file">podgląd pliku</button>
-    <form action="/" method="GET"><button type="submit">powrót</button></form>
+    <form action="/saveSettings" id="saveSett" method="GET">
+        <input type="hidden" name="backgroundColor" id="bgColorInput" value="" />
+        <input type="hidden" name="color" id="colorInput" value="" />
+        <input type="hidden" name="fontSize" id="fontSizeInput" value="" />
+        <input type="hidden" name="filename" id="fontSizeInput" value="{{files_context.curr_filename}}" />
+        <button type="submit">Save Settings</button>
+    </form>
+    <button id="rename_file">zmień nazwę pliku</button>
+    <form action="/showFile" method="GET"><button type="submit">podgląd pliku</button></form>
+    <form action="/backFromFile" method="GET"><button type="submit">powrót</button></form>
 </aside>
 
 <div class="files">
@@ -15,14 +21,30 @@
         <p>{{current_path.dir}}{{files_context.curr_filename}}</p>
     </div>
     <div class="editor-body">
-        <div id="editor-numbers">
+        <div id="editor-numbers" style="font-size: {{files_context.fs}}">
             <p>1</p>
         </div>
         <div class="editor-content">
             <form action="/saveText" method="GET" id="edit-form">
-                <textarea id="edit-area" name="textarea">{{files_context.curr_file_val}}</textarea>
-                <button type="submit">zapisz tekst</button>
+                <textarea id="edit-area" name="textarea" style="background-color: {{files_context.bgc}}; color: {{files_context.c}}; font-size: {{files_context.fs}}">{{files_context.curr_file_val}}</textarea>
+                <button class="saveTxtBtn" type="submit">zapisz tekst</button>
             </form>
         </div>
     </div>
 </div>
+
+<dialog id="rename_f">
+        <form action="/renameFile" method="GET">
+            <label>podaj nową nazwę:<br>
+                <input type='text' name="name"/></label>   
+                <input type="hidden" name="filetype" value={{files_context.curr_filename}}>
+            <button class="ok-btn" type="submit">OK</button>
+        </form>
+        {{#if (isHome current_path.dir)}}
+            <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+        {{else}}
+            <form action="/nextDir/{{encodeDir2 current_path.dir ''}}" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>
+        {{/if}}
+    </dialog>
+
+<div id="overlay2"></div>

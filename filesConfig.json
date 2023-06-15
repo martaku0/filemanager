@@ -1,0 +1,57 @@
+{
+     "1.txt": {
+          "bgc": "rgb(155, 205, 210)",
+          "c": "rgb(250, 240, 228)",
+          "fs": "23px"
+     },
+     "pudlo.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "40px"
+     },
+     "xmlTest.xml": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "28px"
+     },
+     "testowyInnyTyp.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "22px"
+     },
+     "nowaNazwa.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "22px"
+     },
+     "xml.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "22px"
+     },
+     "xml.xml": {
+          "bgc": "rgb(155, 205, 210)",
+          "c": "rgb(250, 240, 228)",
+          "fs": "24px"
+     },
+     "xml1.undefined": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "24px"
+     },
+     "nowaNazwaPliku.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "22px"
+     },
+     "ajaj.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "22px"
+     },
+     "xml1.xml": {
+          "bgc": "rgb(155, 205, 210)",
+          "c": "rgb(250, 240, 228)",
+          "fs": "24px"
+     }
+}

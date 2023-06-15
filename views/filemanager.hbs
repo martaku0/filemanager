@@ -1,6 +1,6 @@
  <aside>
     <button id="new_dir_btn">nowy folder</button>
-    <button id="new_txt_btn">nowy plik tekstowy</button>
+    <button id="new_txt_btn">nowy plik</button>
     <button id="multi_files_btn">wybierz kilka</button>
     {{#unless (isHome current_path.dir)}}
         <button id="rename_btn">zmień nazwę tego folderu</button>
@@ -59,7 +59,15 @@
         <form action="/addTxt" method="GET">
             <label>nazwa nowego pliku:
                 <input type="text" name="name" placeholder="nazwa"></label>
-            <button class="ok-btn" type="submit">OK</button>
+                <select name="filetype">
+                    <option value="txt" selected="selected">txt</option>
+                    <option value="html">html</option>
+                    <option value="xml">xml</option>
+                    <option value="json">json</option>
+                    <option value="css">css</option>
+                    <option value="js">js</option>
+                </select> 
+                <button class="ok-btn" type="submit">OK</button>
         </form>
         {{#if (isHome current_path.dir)}}
             <form action="/" method="GET"><button class="cancel-btn" type="submit">cancel</button></form>

@@ -6,7 +6,7 @@ const fs = require("fs")
 
 const hbs = require('express-handlebars');
 
-const staticPath = path.join(__dirname, 'static'); // Absolute path to the static directory
+const staticPath = path.join(__dirname, 'static');
 
 app.use(express.static(staticPath));
 
@@ -51,6 +51,9 @@ app.engine('hbs', hbs({
                 return true
             }
             return false
+        },
+        getExt: function(fn) {
+            return fn.slice(-3)
         }
     }
 }));
@@ -71,7 +74,10 @@ const context = {
     },
     files_context: {
         curr_filename: '',
-        curr_file_val: ''
+        curr_file_val: '',
+        bgc: 'rgb(255, 255, 255)',
+        c: 'rgb(0, 0, 0)',
+        fs: '20px'
     }
 }
 
@@ -167,17 +173,62 @@ app.get("/addDir", function(req, res) {
 
 app.get("/addTxt", function(req, res) {
     let name = req.query.name
+    let ftype = req.query.filetype
     if (name == "" || name == undefined) {
         name = "bez_nazwy"
     }
-    let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.txt`)
+    let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.${ftype}`)
 
     while (fs.existsSync(filepath)) {
         name += "-kopia"
-        filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.txt`)
+        filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.${ftype}`)
     }
 
-    fs.writeFile(filepath, "", (err) => {
+    let content = ""
+
+    switch (ftype) {
+        case 'html':
+            content = `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Document</title>
+            </head>
+            <body>
+                <p>default html</p>
+            </body>
+            </html>`
+            break;
+        case 'xml':
+            content = `<?xml version="1.0" encoding="UTF-8"?>
+            <default>
+                <text>default xml</text>
+            </default>`
+            break;
+        case 'json':
+            content = `{
+                "default":"json"
+            }`
+            break;
+        case 'css':
+            content = `*
+            {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }`
+            break;
+        case 'js':
+            content = `console.log("Default js")`
+            break;
+        default:
+            content = "default text"
+            break;
+    }
+
+    fs.writeFile(filepath, content, (err) => {
         if (err) {
             res.redirect("/")
             return
@@ -288,7 +339,6 @@ app.get("/renameDir", function(req, res) {
         name += "-kopia"
     }
 
-    console.log(newPath, name, context.current_path.dir)
 
     fs.rename(`./upload${context.current_path.dir}`, `./upload${newPath}${name}/`, (err) => {
         if (err) {
@@ -307,6 +357,10 @@ app.get("/renameDir", function(req, res) {
 /* --- */
 
 app.get('/openEditor/:filename', function(req, res) {
+    context.files_context.bgc = 'rgb(255, 255, 255)'
+    context.files_context.c = 'rgb(0, 0, 0)'
+    context.files_context.fs = '20px'
+
     context.files_context.curr_filename = req.params.filename
     let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${context.files_context.curr_filename}`)
     fs.readFile(filepath, 'utf8', (err, data) => {
@@ -315,6 +369,23 @@ app.get('/openEditor/:filename', function(req, res) {
             return;
         }
         context.files_context.curr_file_val = data
+
+        const filePath = path.join(__dirname, 'filesConfig.json');
+        const jsonData = fs.readFileSync(filePath, 'utf8');
+        let dataConfig = {};
+
+        if (jsonData) {
+            dataConfig = JSON.parse(jsonData);
+        }
+
+
+        if (dataConfig[context.files_context.curr_filename]) {
+            context.files_context.bgc = dataConfig[context.files_context.curr_filename].bgc
+            context.files_context.c = dataConfig[context.files_context.curr_filename].c
+            context.files_context.fs = dataConfig[context.files_context.curr_filename].fs
+        }
+
+
         res.render('editor.hbs', context)
     });
 })
@@ -324,7 +395,6 @@ app.get('/saveText', function(req, res) {
     let val = req.query.textarea
     fs.writeFile(filepath, val, (err) => {
         if (err) {
-            console.log(err)
             res.redirect("/")
             return
         }
@@ -333,7 +403,98 @@ app.get('/saveText', function(req, res) {
     })
 })
 
+app.get('/renameFile', function(req, res) {
+    let name = req.query.name
+    let ftype = req.query.filetype
+    if (req.query.filetype.slice(-4).includes('.')) {
+        if (req.query.filetype.slice(-3).includes('.')) {
+            ftype = ftype.slice(-2)
+        } else {
+            ftype = ftype.slice(-3)
+        }
+    } else {
+        ftype = ftype.slice(-4)
+    }
+    if (name == "" || name == undefined) {
+        name = "bez_nazwy"
+    }
+    let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.${ftype}`)
 
+    while (fs.existsSync(filepath)) {
+        name += "-kopia"
+        filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}.${ftype}`)
+    }
+
+    let OldFilepath = path.join(__dirname, `upload${context.current_path.dir}`, `${context.files_context.curr_filename}`)
+
+    fs.rename(OldFilepath, filepath, (err) => {
+        if (err) {
+            res.redirect("/")
+            return
+        }
+
+        let oldName = context.files_context.curr_filename
+        context.files_context.curr_filename = name + `.${ftype}`
+
+        const filePath = path.join(__dirname, 'filesConfig.json');
+        const jsonData = fs.readFileSync(filePath, 'utf8');
+        let data = {};
+
+        if (jsonData) {
+            data = JSON.parse(jsonData);
+        }
+
+        if (data[oldName]) {
+            data[context.files_context.curr_filename] = { "bgc": data[oldName].bgc, "c": data[oldName].c, "fs": data[oldName].fs };
+
+
+            const updatedData = JSON.stringify(data, null, 5);
+
+            fs.writeFileSync(filePath, updatedData, 'utf8');
+        }
+
+        res.redirect(`/openEditor/${context.files_context.curr_filename}`)
+    })
+})
+
+
+app.get('/backFromFile', function(req, res) {
+    if (context.current_path.dir == "/") {
+        res.redirect("/")
+    } else {
+        res.redirect(`/nextDir/${encodeURIComponent(context.current_path.dir)}`)
+    }
+})
+
+app.get('/saveSettings', function(req, res) {
+    const filePath = path.join(__dirname, 'filesConfig.json');
+    const jsonData = fs.readFileSync(filePath, 'utf8');
+    let data = {};
+
+    if (jsonData) {
+        data = JSON.parse(jsonData);
+    }
+
+    data[req.query.filename] = { "bgc": req.query.backgroundColor, "c": req.query.color, "fs": req.query.fontSize };
+
+    const updatedData = JSON.stringify(data, null, 5);
+
+    fs.writeFileSync(filePath, updatedData, 'utf8');
+
+    res.redirect(`/openEditor/${context.files_context.curr_filename}`);
+});
+
+app.get('/showFile', function(req, res) {
+    let filePath = path.join(__dirname, `upload${context.current_path.dir}`, `${context.files_context.curr_filename}`)
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            res.redirect('/')
+            return;
+        }
+
+        res.send(data);
+    });
+});
 
 /* --- */
 
