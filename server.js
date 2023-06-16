@@ -68,6 +68,10 @@ const context = {
         names: [],
         paths: [],
     },
+    imgs: {
+        names: [],
+        paths: [],
+    },
     current_path: {
         path: 'home>',
         dir: '/'
@@ -78,7 +82,17 @@ const context = {
         bgc: 'rgb(255, 255, 255)',
         c: 'rgb(0, 0, 0)',
         fs: '20px'
-    }
+    },
+    img_context: {
+        curr_img: '',
+        curr_img_path: '',
+        curr_img_filter: ''
+    },
+    effects: [
+        { name: "grayscale" },
+        { name: "invert" },
+        { name: "sepia" }
+    ],
 }
 
 app.get("/", function(req, res) {
@@ -90,6 +104,8 @@ app.get("/", function(req, res) {
     context.dirs.paths = []
     context.files.names = []
     context.files.paths = []
+    context.imgs.names = []
+    context.imgs.paths = []
 
     fs.readdir(`./upload/`, (err, pliki) => {
         if (err) {
@@ -105,8 +121,22 @@ app.get("/", function(req, res) {
                 context.files.paths.push(context.current_path.dir)
             }
         });
-        res.render('filemanager.hbs', context);
+        fs.readdir(`./static/imgs`, (err, pliki) => {
+            if (err) {
+                res.redirect("/")
+                return
+            }
+            pliki.forEach(e => {
+                if (path.extname(e) == ".jpg" || path.extname(e) == ".jpeg" || path.extname(e) == ".png") {
+                    context.imgs.names.push(e)
+                    context.imgs.paths.push(context.current_path.dir)
+                }
+            });
+            res.render('filemanager.hbs', context);
+        })
     })
+
+
 })
 
 app.get("/nextDir/:path", function(req, res) {
@@ -129,6 +159,8 @@ app.get("/nextDir/:path", function(req, res) {
     context.dirs.paths = []
     context.files.names = []
     context.files.paths = []
+    context.imgs.names = []
+    context.imgs.paths = []
 
     fs.readdir(`./upload${context.current_path.dir}`, (err, pliki) => {
         if (err) {
@@ -144,8 +176,22 @@ app.get("/nextDir/:path", function(req, res) {
                 context.files.paths.push(context.current_path.dir)
             }
         });
-        res.render('filemanager.hbs', context);
+        fs.readdir(`./static/imgs`, (err, pliki) => {
+            if (err) {
+                res.redirect("/")
+                return
+            }
+            pliki.forEach(e => {
+                if (path.extname(e) == ".jpg" || path.extname(e) == ".jpeg" || path.extname(e) == ".png") {
+                    context.imgs.names.push(e)
+                    context.imgs.paths.push(context.current_path.dir)
+                }
+            });
+            res.render('filemanager.hbs', context);
+        })
     })
+
+
 })
 
 app.get("/addDir", function(req, res) {
@@ -244,15 +290,34 @@ app.get("/addTxt", function(req, res) {
 
 app.get("/addMulti", function(req, res) {
     let files_names = req.query.name
+    let n = 1
+    if (typeof(files_names) == "object") {
+        n = files_names.length
+    }
+    let name = ''
 
-    files_names.forEach(element => {
-        let name = element
+    for (let i = 0; i < n; i++) {
+        if (typeof(files_names) == "object") {
+            name = files_names[i]
+        } else {
+            name = files_names
+        }
 
-        let filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}`)
+        let filepath = ''
+
+        if (path.extname(name) == ".jpg" || path.extname(name) == ".jpeg" || path.extname(name) == ".png") {
+            filepath = path.join(__dirname, `static/imgs${context.current_path.dir}`, `${name}`)
+        } else {
+            filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}`)
+        }
 
         while (fs.existsSync(filepath)) {
             name += "-kopia"
-            filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}`)
+            if (path.extname(name) == ".jpg" || path.extname(name) == ".jpeg" || path.extname(name) == ".png") {
+                filepath = path.join(__dirname, `static/imgs${context.current_path.dir}`, `${name}`)
+            } else {
+                filepath = path.join(__dirname, `upload${context.current_path.dir}`, `${name}`)
+            }
         }
 
         fs.writeFile(filepath, "", (err) => {
@@ -262,7 +327,7 @@ app.get("/addMulti", function(req, res) {
             }
             console.log("ok")
         })
-    });
+    }
 
     if (context.current_path.dir == "/") {
         res.redirect("/")
@@ -495,6 +560,45 @@ app.get('/showFile', function(req, res) {
         res.send(data);
     });
 });
+
+/* --- */
+
+app.get('/openImg/:filename', function(req, res) {
+    context.img_context.curr_img = req.params.filename
+    let p = path.join(__dirname, `upload${context.current_path.dir}`, `${context.img_context.curr_img}`)
+    context.img_context.curr_img_path = p
+
+    const filePath = path.join(__dirname, 'filesConfig.json');
+    const jsonData = fs.readFileSync(filePath, 'utf8');
+    let data = {};
+
+    if (jsonData) {
+        data = JSON.parse(jsonData);
+    }
+
+    context.img_context.curr_img_filter = data[context.img_context.curr_img].filter
+
+    res.render('filters.hbs', context);
+})
+
+app.get('/saveImg', function(req, res) {
+
+    const filePath = path.join(__dirname, 'filesConfig.json');
+    const jsonData = fs.readFileSync(filePath, 'utf8');
+    let data = {};
+
+    if (jsonData) {
+        data = JSON.parse(jsonData);
+    }
+
+    data[context.img_context.curr_img] = { "filter": req.query.filter };
+
+    const updatedData = JSON.stringify(data, null, 5);
+
+    fs.writeFileSync(filePath, updatedData, 'utf8');
+
+    res.redirect(`/openImg/${context.img_context.curr_img}`)
+})
 
 /* --- */
 

@@ -53,5 +53,8 @@
           "bgc": "rgb(155, 205, 210)",
           "c": "rgb(250, 240, 228)",
           "fs": "24px"
+     },
+     "kochanowski.jpg": {
+          "filter": "sepia(1)"
      }
 }

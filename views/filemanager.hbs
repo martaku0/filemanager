@@ -41,6 +41,19 @@
         {{/each}}
     </div>
 
+    <div id="imgs-container">
+        {{#each imgs.names}}
+            {{#if (checkCurrentDir ../current_path.dir ../imgs.paths @index)}}
+                <div class="img-div">
+                    <img src="/gfx/image.png" alt="image">
+                    <form action="/openImg/{{this}}" method="GET"><button class="open-img-btn" type="submit">{{this}}</button></form>
+                    <form class="del-file-btn" action="/delTxt" method="GET"><button type="submit" name="name" value="{{this}}">X</button>
+                    </form>
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+
     <!-- ============= -->
 
     <dialog id="new_dir">
@@ -76,7 +89,7 @@
         {{/if}}
     </dialog>
     <dialog id="multi_files">
-        <form action="/addMulti" method="GET">
+        <form action="/addMulti" method="GET" enctype="multipart/form-data">
             <label>wybierz kilka:<br>
                 <input type='file' name="name" multiple/></label>   
             <button class="ok-btn" type="submit">OK</button>

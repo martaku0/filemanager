@@ -102,3 +102,42 @@ if (document.getElementById('saveSett')) {
         this.submit();
     })
 }
+
+// ================
+
+if (document.getElementById('open_panel')) {
+    document.getElementById('open_panel').addEventListener('click', function() {
+        if (document.getElementById("panel").style.width == "200px") {
+            document.getElementById("panel").style.width = "0px"
+            for (let i = 0; i < document.getElementById("panel").children.length; i++) {
+                document.getElementById("panel").children[i].style.display = "none"
+            }
+        } else {
+            document.getElementById("panel").style.width = "200px"
+            for (let i = 0; i < document.getElementById("panel").children.length; i++) {
+                document.getElementById("panel").children[i].style.display = "block"
+            }
+        }
+    })
+}
+
+if (document.getElementsByClassName('img-filter')) {
+    let filters = document.getElementsByClassName('img-filter');
+    for (let i = 0; i < filters.length; i++) {
+        filters[i].addEventListener('click', function() {
+            document.getElementById('main-pic').style.filter = filters[i].style.filter
+        })
+    }
+}
+
+if (document.getElementById('saveimg')) {
+    document.getElementById('saveimg').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const pic = document.getElementById('main-pic');
+        const filter = getComputedStyle(pic).filter;
+        document.getElementById('filter-inp').value = filter;
+
+        this.submit();
+    })
+}

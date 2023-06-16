@@ -1,0 +1,19 @@
+<aside>
+    <button id="open_panel">filters</button>
+</aside>
+<div id="panel">
+    {{#each effects}}
+        <div class="one-of-filter">
+            <img class="img-filter" style="filter:{{name}}(100%); max-width: 100px; max-height: 100px;" src="/imgs/{{../img_context.curr_img}}" alt="image">
+            <p>{{name}}</p>
+        </div>
+    {{/each}}
+    <div class="one-of-filter">
+        <img class="img-filter" style="max-width: 100px; max-height: 100px;" src="/imgs/{{img_context.curr_img}}" alt="image">
+        <p>none</p>
+    </div>
+</div>
+<div class="main-photo-container">
+    <img style="margin: 100px; width: 500px; height: 500px; filter:{{img_context.curr_img_filter}}" id="main-pic" src="/imgs/{{img_context.curr_img}}" alt="image">
+    <form id="saveimg" action="/saveImg" method="GET"><input type="hidden" id="filter-inp" name="filter" value=""><button type="submit">zapisz</button></form>
+</div>
