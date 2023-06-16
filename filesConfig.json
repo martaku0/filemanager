@@ -56,5 +56,18 @@
      },
      "kochanowski.jpg": {
           "filter": "sepia(1)"
+     },
+     "untitled.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "24px"
+     },
+     "untitled-kopia.txt": {
+          "bgc": "rgb(0, 0, 0)",
+          "c": "rgb(255, 255, 255)",
+          "fs": "24px"
+     },
+     "images.png": {
+          "filter": "none"
      }
 }

@@ -3,12 +3,14 @@ const app = express()
 const PORT = 3000;
 const path = require("path")
 const fs = require("fs")
+const cookieparser = require("cookie-parser");
 
 const hbs = require('express-handlebars');
 
 const staticPath = path.join(__dirname, 'static');
 
 app.use(express.static(staticPath));
+app.use(cookieparser())
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', hbs({
@@ -132,6 +134,8 @@ app.get("/", function(req, res) {
                     context.imgs.paths.push(context.current_path.dir)
                 }
             });
+            console.log(context)
+
             res.render('filemanager.hbs', context);
         })
     })
@@ -140,6 +144,7 @@ app.get("/", function(req, res) {
 })
 
 app.get("/nextDir/:path", function(req, res) {
+    console.log(context)
     const decodedPath = decodeURIComponent(req.params.path);
 
     context.current_path.path = `home>${decodedPath}>`;
@@ -176,19 +181,7 @@ app.get("/nextDir/:path", function(req, res) {
                 context.files.paths.push(context.current_path.dir)
             }
         });
-        fs.readdir(`./static/imgs`, (err, pliki) => {
-            if (err) {
-                res.redirect("/")
-                return
-            }
-            pliki.forEach(e => {
-                if (path.extname(e) == ".jpg" || path.extname(e) == ".jpeg" || path.extname(e) == ".png") {
-                    context.imgs.names.push(e)
-                    context.imgs.paths.push(context.current_path.dir)
-                }
-            });
-            res.render('filemanager.hbs', context);
-        })
+        res.render('filemanager.hbs', context);
     })
 
 
@@ -576,7 +569,9 @@ app.get('/openImg/:filename', function(req, res) {
         data = JSON.parse(jsonData);
     }
 
-    context.img_context.curr_img_filter = data[context.img_context.curr_img].filter
+    if (data[context.img_context.curr_img]) {
+        context.img_context.curr_img_filter = data[context.img_context.curr_img].filter
+    }
 
     res.render('filters.hbs', context);
 })
